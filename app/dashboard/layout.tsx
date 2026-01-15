@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
-  MessageSquare,
   LogOut,
   User,
   Trophy,
@@ -130,9 +130,13 @@ export default function DashboardLayout({
           {/* Logo */}
           <div className="flex items-center justify-between p-4 border-b border-border">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-primary" />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="BreakerBot"
+                width={40}
+                height={40}
+                className="rounded-xl"
+              />
               <div>
                 <h1 className="font-bold text-foreground">BreakerBot</h1>
                 <p className="text-xs text-muted-foreground">
@@ -216,9 +220,13 @@ export default function DashboardLayout({
               <Menu className="w-5 h-5" />
             </Button>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <MessageSquare className="w-4 h-4 text-primary" />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="BreakerBot"
+                width={32}
+                height={32}
+                className="rounded-lg"
+              />
               <span className="font-semibold">BreakerBot</span>
             </div>
             <div className="flex items-center gap-1">

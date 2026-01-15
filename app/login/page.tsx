@@ -2,90 +2,46 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { MessageSquare, Phone, ArrowRight, Loader2 } from 'lucide-react';
+import { Phone, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 
-const DDD_OPTIONS = [
-  '11', '12', '13', '14', '15', '16', '17', '18', '19',
-  '21', '22', '24',
-  '27', '28',
-  '31', '32', '33', '34', '35', '37', '38',
-  '41', '42', '43', '44', '45', '46',
-  '47', '48', '49',
-  '51', '53', '54', '55',
-  '61',
-  '62', '64',
-  '63',
-  '65', '66',
-  '67',
-  '68',
-  '69',
-  '71', '73', '74', '75', '77',
-  '79',
-  '81', '87',
-  '82',
-  '83',
-  '84',
-  '85', '88',
-  '86', '89',
-  '91', '93', '94',
-  '92', '97',
-  '95',
-  '96',
-  '98', '99',
-];
-
 export default function LoginPage() {
   const router = useRouter();
   const { requestCode } = useAuth();
-  const [ddd, setDdd] = useState('');
-  const [number, setNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const formatNumber = (value: string) => {
-    const digits = value.replace(/\D/g, '').slice(0, 9);
-    if (digits.length > 5) {
-      return `${digits.slice(0, 5)}-${digits.slice(5)}`;
-    }
-    return digits;
-  };
-
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNumber(formatNumber(e.target.value));
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^\d+]/g, '');
+    const cleaned = value.startsWith('+') 
+      ? '+' + value.slice(1).replace(/\+/g, '')
+      : value.replace(/\+/g, '');
+    setPhoneNumber(cleaned);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const cleanNumber = number.replace(/\D/g, '');
+    const cleanNumber = phoneNumber.replace(/\D/g, '');
     
-    if (!ddd || ddd.length !== 2) {
-      toast({
-        title: 'DDD inválido',
-        description: 'Por favor, selecione um DDD válido.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (cleanNumber.length < 8 || cleanNumber.length > 9) {
+    if (cleanNumber.length < 10 || cleanNumber.length > 15) {
       toast({
         title: 'Número inválido',
-        description: 'O número deve ter 8 ou 9 dígitos.',
+        description: 'Digite o número completo com código do país.',
         variant: 'destructive',
       });
       return;
     }
 
     setIsLoading(true);
-    const fullNumber = `55${ddd}${cleanNumber}`;
     
-    const result = await requestCode(fullNumber);
+    const result = await requestCode(cleanNumber);
     
     setIsLoading(false);
 
@@ -131,11 +87,15 @@ export default function LoginPage() {
             transition={{ delay: 0.1, duration: 0.4 }}
             className="flex flex-col items-center mb-8"
           >
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 shadow-glow">
-              <MessageSquare className="w-8 h-8 text-primary" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">BreakerBot</h1>
-            <p className="text-muted-foreground text-sm mt-1">Painel de Gerenciamento</p>
+            <Image
+              src="/logo.png"
+              alt="BreakerBot"
+              width={180}
+              height={180}
+              className="mb-2"
+              priority
+            />
+            <p className="text-muted-foreground text-sm">Painel de Gerenciamento</p>
           </motion.div>
 
           {/* Form */}
@@ -150,36 +110,18 @@ export default function LoginPage() {
                 Seu número do WhatsApp
               </label>
               
-              <div className="flex gap-3">
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
-                    +55
-                  </span>
-                  <select
-                    value={ddd}
-                    onChange={(e) => setDdd(e.target.value)}
-                    className="h-12 w-24 pl-10 pr-2 rounded-lg border border-input bg-background text-foreground text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:border-primary"
-                    required
-                  >
-                    <option value="">DDD</option>
-                    {DDD_OPTIONS.map((d) => (
-                      <option key={d} value={d}>{d}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <Input
-                  type="tel"
-                  placeholder="99999-9999"
-                  value={number}
-                  onChange={handleNumberChange}
-                  className="flex-1"
-                  required
-                />
-              </div>
+              <Input
+                type="tel"
+                placeholder="5516999999999"
+                value={phoneNumber}
+                onChange={handlePhoneChange}
+                className="h-12 text-base"
+                required
+                maxLength={18}
+              />
               
               <p className="text-xs text-muted-foreground mt-2">
-                Um código de verificação será enviado para seu WhatsApp
+                Código do país + DDD + número. Ex: 5516999999999
               </p>
             </motion.div>
 

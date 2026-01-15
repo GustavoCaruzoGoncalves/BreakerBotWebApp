@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { MessageSquare, ArrowLeft, Loader2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Loader2, ShieldCheck, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/contexts/AuthContext';
@@ -229,7 +230,7 @@ export default function VerifyPage() {
                 </>
               ) : (
                 <>
-                  <MessageSquare className="w-5 h-5" />
+                  <LogIn className="w-5 h-5" />
                   Entrar
                 </>
               )}

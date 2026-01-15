@@ -245,6 +245,12 @@ export const api = {
     
     getByUser: (id: string) =>
       fetchApi<AmigoSecretoResponse>(`/api/amigo-secreto/user/${encodeURIComponent(id)}`),
+    
+    updatePresente: (groupId: string, odI: string, presente: string) =>
+      fetchApi<ApiResponse & { odI?: string; presente?: string | null }>(`/api/amigo-secreto/${encodeURIComponent(groupId)}/presente`, {
+        method: 'PATCH',
+        body: JSON.stringify({ odI, presente }),
+      }),
   },
 
   health: {
