@@ -1,85 +1,85 @@
-# **BreakerBot WebApp - Painel de Gerenciamento 🎛️**
+# **BreakerBot WebApp - Management Dashboard 🎛️**
 
 ## **Overview**
-BreakerBot WebApp é a interface web de gerenciamento do [BreakerBot](https://github.com/GustavoCaruzoGoncalves/BreakerBot). Permite que usuários visualizem suas estatísticas, configurem preferências e acompanhem rankings diretamente pelo navegador, sem precisar interagir com o bot via WhatsApp.
+BreakerBot WebApp is the web management interface for [BreakerBot](https://github.com/GustavoCaruzoGoncalves/BreakerBot). It allows users to view their statistics, configure preferences, and track rankings directly from the browser, without needing to interact with the bot via WhatsApp.
 
 ## **Key Features**
-- **Autenticação via WhatsApp** – Login seguro usando código enviado pelo bot diretamente no seu WhatsApp.
-- **Perfil do Usuário** – Visualize nível, XP, prestígio, mensagens enviadas e conquistas.
-- **Configurações Personalizadas** – Defina nome personalizado, ative/desative menções e configure emoji de reação.
-- **Ranking** – Acompanhe o ranking de XP e veja quem ganhou o bônus diário.
-- **Amigo Secreto** – Visualize grupos de amigo secreto, participantes e quem você tirou no sorteio.
-- **Painel Admin** – Administradores têm acesso a configurações avançadas e backups.
-- **Modo Escuro** – Interface adaptável com suporte a tema claro, escuro e automático.
+- **WhatsApp Authentication** – Secure login using a code sent by the bot directly to your WhatsApp.
+- **User Profile** – View level, XP, prestige, messages sent, and achievements.
+- **Custom Settings** – Set a custom name, enable/disable mentions, and configure reaction emoji.
+- **Ranking** – Track the XP ranking and see who won the daily bonus.
+- **Secret Santa** – View Secret Santa groups, participants, and who you drew in the raffle.
+- **Admin Panel** – Administrators have access to advanced settings and backups.
+- **Dark Mode** – Adaptive interface with support for light, dark, and automatic themes.
 
-## **Tecnologias**
-- **Next.js 14** – Framework React com App Router
-- **TypeScript** – Tipagem estática
-- **Tailwind CSS** – Estilização utilitária
-- **shadcn/ui** – Componentes de UI
-- **Framer Motion** – Animações fluidas
-- **next-themes** – Gerenciamento de temas
+## **Technologies**
+- **Next.js 14** – React framework with App Router
+- **TypeScript** – Static typing
+- **Tailwind CSS** – Utility-first styling
+- **shadcn/ui** – UI components
+- **Framer Motion** – Smooth animations
+- **next-themes** – Theme management
 
 ## **Installation & Setup**
 
 ### **Prerequisites**
-- **Node.js** (v18 ou superior)
-- **npm** ou **yarn**
-- **BreakerBot API** rodando (veja o [repositório principal](https://github.com/GustavoCaruzoGoncalves/BreakerBot))
+- **Node.js** (v18 or higher)
+- **npm** or **yarn**
+- **BreakerBot API** running (see the [main repository](https://github.com/GustavoCaruzoGoncalves/BreakerBot))
 
 ### **Installation Steps**
 
-#### **1. Clone o Repositório**
+#### **1. Clone the Repository**
 ```sh
 git clone https://github.com/GustavoCaruzoGoncalves/BreakerBotWebApp.git
 cd BreakerBotWebApp
 ```
 
-#### **2. Configure as Variáveis de Ambiente**
+#### **2. Configure Environment Variables**
 ```sh
 cp .env.example .env.local
 ```
-Edite `.env.local` e configure a URL da API:
+Edit `.env.local` and set the API URL:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
-#### **3. Instale as Dependências**
+#### **3. Install Dependencies**
 ```sh
 npm install
 ```
 
-#### **4. Execute em Desenvolvimento**
+#### **4. Run in Development**
 ```sh
 npm run dev
 ```
-Acesse http://localhost:3000
+Access http://localhost:3000
 
 ## **Production Deployment**
 
-### **Build para Produção**
+### **Build for Production**
 ```sh
 npm run build
 ```
 
-### **Executar com PM2**
+### **Run with PM2**
 ```sh
 npm run server
 ```
 
-### **Comandos PM2**
+### **PM2 Commands**
 ```sh
-npm run stop      # Para o servidor
-npm run restart   # Reinicia o servidor
+npm run stop      # Stop the server
+npm run restart   # Restart the server
 ```
 
-## **Configuração com Nginx**
-Para servir em produção com domínio próprio, configure o Nginx como proxy reverso:
+## **Nginx Configuration**
+To serve in production with your own domain, configure Nginx as a reverse proxy:
 
 ```nginx
 server {
     listen 80;
-    server_name app.seudominio.com;
+    server_name app.yourdomain.com;
 
     location / {
         proxy_pass http://localhost:3000;
@@ -93,32 +93,32 @@ server {
 }
 ```
 
-## **Estrutura do Projeto**
+## **Project Structure**
 ```
 BreakerBotWebApp/
-├── app/                    # Páginas (App Router)
-│   ├── dashboard/          # Área logada
-│   │   ├── page.tsx        # Perfil
+├── app/                    # Pages (App Router)
+│   ├── dashboard/          # Logged-in area
+│   │   ├── page.tsx        # Profile
 │   │   ├── ranking/        # Ranking
-│   │   ├── amigo-secreto/  # Amigo Secreto
-│   │   └── settings/       # Configurações (admin)
-│   ├── login/              # Página de login
-│   └── verify/             # Verificação de código
-├── components/             # Componentes reutilizáveis
-├── contexts/               # Contextos React (Auth)
-├── hooks/                  # Hooks customizados
-└── lib/                    # Utilitários e API client
+│   │   ├── amigo-secreto/  # Secret Santa
+│   │   └── settings/       # Settings (admin)
+│   ├── login/              # Login page
+│   └── verify/             # Code verification
+├── components/             # Reusable components
+├── contexts/               # React contexts (Auth)
+├── hooks/                  # Custom hooks
+└── lib/                    # Utilities and API client
 ```
 
-## **Integração com BreakerBot**
-Este webapp se comunica com a API REST do BreakerBot. Certifique-se de que:
+## **BreakerBot Integration**
+This webapp communicates with the BreakerBot REST API. Make sure that:
 
-1. O BreakerBot está rodando com a API habilitada (`npm run startwapi`)
-2. A variável `CORS_ORIGINS` no `.env` do BreakerBot inclui a URL do webapp
-3. A variável `NEXT_PUBLIC_API_URL` aponta para a API corretamente
+1. BreakerBot is running with the API enabled (`npm run startwapi`)
+2. The `CORS_ORIGINS` variable in BreakerBot's `.env` includes the webapp URL
+3. The `NEXT_PUBLIC_API_URL` variable points to the API correctly
 
 ## **License**
-Este projeto é licenciado sob a MIT License.
+This project is licensed under the MIT License.
 
 ## **Contributing**
-Contribuições são bem-vindas! Abra uma issue ou envie um pull request.
+Contributions are welcome! Open an issue or submit a pull request.
