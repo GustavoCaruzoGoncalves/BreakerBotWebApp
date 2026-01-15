@@ -1,73 +1,124 @@
-# Welcome to your Lovable project
+# **BreakerBot WebApp - Painel de Gerenciamento 🎛️**
 
-## Project info
+## **Overview**
+BreakerBot WebApp é a interface web de gerenciamento do [BreakerBot](https://github.com/GustavoCaruzoGoncalves/BreakerBot). Permite que usuários visualizem suas estatísticas, configurem preferências e acompanhem rankings diretamente pelo navegador, sem precisar interagir com o bot via WhatsApp.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## **Key Features**
+- **Autenticação via WhatsApp** – Login seguro usando código enviado pelo bot diretamente no seu WhatsApp.
+- **Perfil do Usuário** – Visualize nível, XP, prestígio, mensagens enviadas e conquistas.
+- **Configurações Personalizadas** – Defina nome personalizado, ative/desative menções e configure emoji de reação.
+- **Ranking** – Acompanhe o ranking de XP e veja quem ganhou o bônus diário.
+- **Amigo Secreto** – Visualize grupos de amigo secreto, participantes e quem você tirou no sorteio.
+- **Painel Admin** – Administradores têm acesso a configurações avançadas e backups.
+- **Modo Escuro** – Interface adaptável com suporte a tema claro, escuro e automático.
 
-## How can I edit this code?
+## **Tecnologias**
+- **Next.js 14** – Framework React com App Router
+- **TypeScript** – Tipagem estática
+- **Tailwind CSS** – Estilização utilitária
+- **shadcn/ui** – Componentes de UI
+- **Framer Motion** – Animações fluidas
+- **next-themes** – Gerenciamento de temas
 
-There are several ways of editing your application.
+## **Installation & Setup**
 
-**Use Lovable**
+### **Prerequisites**
+- **Node.js** (v18 ou superior)
+- **npm** ou **yarn**
+- **BreakerBot API** rodando (veja o [repositório principal](https://github.com/GustavoCaruzoGoncalves/BreakerBot))
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### **Installation Steps**
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+#### **1. Clone o Repositório**
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+git clone https://github.com/GustavoCaruzoGoncalves/BreakerBotWebApp.git
+cd BreakerBotWebApp
 ```
 
-**Edit a file directly in GitHub**
+#### **2. Configure as Variáveis de Ambiente**
+```sh
+cp .env.example .env.local
+```
+Edite `.env.local` e configure a URL da API:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+#### **3. Instale as Dependências**
+```sh
+npm install
+```
 
-**Use GitHub Codespaces**
+#### **4. Execute em Desenvolvimento**
+```sh
+npm run dev
+```
+Acesse http://localhost:3000
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## **Production Deployment**
 
-## What technologies are used for this project?
+### **Build para Produção**
+```sh
+npm run build
+```
 
-This project is built with:
+### **Executar com PM2**
+```sh
+npm run server
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### **Comandos PM2**
+```sh
+npm run stop      # Para o servidor
+npm run restart   # Reinicia o servidor
+```
 
-## How can I deploy this project?
+## **Configuração com Nginx**
+Para servir em produção com domínio próprio, configure o Nginx como proxy reverso:
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+```nginx
+server {
+    listen 80;
+    server_name app.seudominio.com;
 
-## Can I connect a custom domain to my Lovable project?
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
 
-Yes, you can!
+## **Estrutura do Projeto**
+```
+BreakerBotWebApp/
+├── app/                    # Páginas (App Router)
+│   ├── dashboard/          # Área logada
+│   │   ├── page.tsx        # Perfil
+│   │   ├── ranking/        # Ranking
+│   │   ├── amigo-secreto/  # Amigo Secreto
+│   │   └── settings/       # Configurações (admin)
+│   ├── login/              # Página de login
+│   └── verify/             # Verificação de código
+├── components/             # Componentes reutilizáveis
+├── contexts/               # Contextos React (Auth)
+├── hooks/                  # Hooks customizados
+└── lib/                    # Utilitários e API client
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## **Integração com BreakerBot**
+Este webapp se comunica com a API REST do BreakerBot. Certifique-se de que:
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+1. O BreakerBot está rodando com a API habilitada (`npm run startwapi`)
+2. A variável `CORS_ORIGINS` no `.env` do BreakerBot inclui a URL do webapp
+3. A variável `NEXT_PUBLIC_API_URL` aponta para a API corretamente
+
+## **License**
+Este projeto é licenciado sob a MIT License.
+
+## **Contributing**
+Contribuições são bem-vindas! Abra uma issue ou envie um pull request.
