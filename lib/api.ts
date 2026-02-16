@@ -86,6 +86,81 @@ export interface HealthResponse extends ApiResponse {
   uptime?: number;
 }
 
+export interface AuraRankEntry {
+  userId: string;
+  auraPoints: number;
+  tierName: string;
+  displayName: string;
+  character?: string | null;
+}
+
+export interface AuraTier {
+  minPoints: number;
+  name: string;
+}
+
+export interface AuraRankingResponse extends ApiResponse {
+  limit?: number;
+  ranking?: AuraRankEntry[];
+  tiers?: AuraTier[];
+}
+
+export interface AuraDailyMissions {
+  lastResetDate: string | null;
+  drawnMissions: string[];
+  completedMissionIds: string[];
+  progress: {
+    messages: number;
+    reactions: number;
+    duelWin: number;
+    surviveAttack: number;
+    media: number;
+    helpSomeone: number;
+  };
+}
+
+export interface AuraUserData {
+  auraPoints: number;
+  stickerHash: string | null;
+  stickerDataUrl: string | null;
+  character: string | null;
+  hasStickerHash: boolean;
+  dailyMissions: AuraDailyMissions | null;
+  lastRitualDate: string | null;
+  lastTreinarAt: number | null;
+  lastDominarAt: number | null;
+  tierName: string;
+  tierMinPoints: number;
+}
+
+export interface AuraUserResponse extends ApiResponse {
+  userId?: string;
+  displayName?: string;
+  aura?: AuraUserData;
+  praisedBy?: string[];
+  profile?: {
+    pushName: string | null;
+    customName: string | null;
+    customNameEnabled: boolean;
+  };
+}
+
+export interface AuraTiersResponse extends ApiResponse {
+  tiers?: AuraTier[];
+}
+
+export interface AuraConfigResponse extends ApiResponse {
+  tiers?: AuraTier[];
+  missionIds?: string[];
+  missionConfig?: Record<string, { target: number; reward: number; label: string }>;
+  randomEvents?: unknown[];
+  eventSpawnChance?: number;
+  eventCooldownMs?: number;
+  mogDurationMs?: number;
+  mognowCountdownSec?: number;
+  mognowWindowMs?: number;
+}
+
 export interface AdminData {
   number: string;
   fullId: string;
@@ -255,5 +330,19 @@ export const api = {
 
   health: {
     check: () => fetchApi<HealthResponse>('/api/health'),
+  },
+
+  aura: {
+    ranking: (limit = 10) =>
+      fetchApi<AuraRankingResponse>(`/api/aura/ranking?limit=${limit}`),
+
+    getUser: (id: string) =>
+      fetchApi<AuraUserResponse>(`/api/aura/users/${encodeURIComponent(id)}`),
+
+    tiers: () =>
+      fetchApi<AuraTiersResponse>('/api/aura/tiers'),
+
+    config: () =>
+      fetchApi<AuraConfigResponse>('/api/aura/config'),
   },
 };

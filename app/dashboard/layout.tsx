@@ -10,6 +10,7 @@ import {
   User,
   Trophy,
   Gift,
+  Flame,
   Settings,
   Archive,
   Menu,
@@ -33,6 +34,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Meu Perfil', icon: User },
   { href: '/dashboard/ranking', label: 'Ranking', icon: Trophy },
+  { href: '/dashboard/aura', label: 'Aura', icon: Flame },
   { href: '/dashboard/amigo-secreto', label: 'Amigo Secreto', icon: Gift },
   { href: '/dashboard/settings', label: 'Configurações', icon: Settings, adminOnly: true },
   { href: '/dashboard/backups', label: 'Backups', icon: Archive, adminOnly: true },
@@ -105,13 +107,11 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Background Effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       </div>
 
-      {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -119,7 +119,6 @@ export default function DashboardLayout({
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={cn(
           "fixed top-0 left-0 z-50 h-full w-64 bg-card border-r border-border transform transition-transform duration-300 ease-in-out lg:translate-x-0",
@@ -127,7 +126,6 @@ export default function DashboardLayout({
         )}
       >
         <div className="flex flex-col h-full">
-          {/* Logo */}
           <div className="flex items-center justify-between p-4 border-b border-border">
             <div className="flex items-center gap-3">
               <Image
@@ -154,7 +152,6 @@ export default function DashboardLayout({
             </Button>
           </div>
 
-          {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1">
             {filteredNavItems.map((item) => {
               const isActive = pathname === item.href;
@@ -179,11 +176,8 @@ export default function DashboardLayout({
             })}
           </nav>
 
-          {/* Footer */}
           <div className="p-4 border-t border-border space-y-3">
-            {/* Theme Toggle */}
             <ThemeToggleExpanded className="w-full" />
-            
             <Button
               variant="ghost"
               size="sm"
@@ -207,9 +201,7 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      {/* Main Content */}
       <div className="lg:pl-64">
-        {/* Mobile Header */}
         <header className="sticky top-0 z-30 lg:hidden glass-strong border-b border-border/50">
           <div className="flex items-center justify-between px-4 h-14">
             <Button
@@ -243,7 +235,6 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        {/* Page Content */}
         <main className="p-4 lg:p-8">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
