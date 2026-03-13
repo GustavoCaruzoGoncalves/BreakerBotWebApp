@@ -149,6 +149,19 @@ export interface AuraTiersResponse extends ApiResponse {
   tiers?: AuraTier[];
 }
 
+export interface AuraSlotReelSymbol {
+  id: string;
+  emoji: string;
+}
+
+export interface AuraSlotResponse extends ApiResponse {
+  reels?: AuraSlotReelSymbol[][];
+  bet?: number;
+  win?: number;
+  netChange?: number;
+  balance?: number;
+}
+
 export interface AuraConfigResponse extends ApiResponse {
   tiers?: AuraTier[];
   missionIds?: string[];
@@ -344,5 +357,17 @@ export const api = {
 
     config: () =>
       fetchApi<AuraConfigResponse>('/api/aura/config'),
+
+    slot: (token: string, bet: number) =>
+      fetchApi<AuraSlotResponse>('/api/aura/slot', {
+        method: 'POST',
+        body: JSON.stringify({ token, bet }),
+      }),
+
+    gameReward: (token: string, game: string, score: number) =>
+      fetchApi<{ success: boolean; reward?: number; balance?: number }>('/api/aura/game-reward', {
+        method: 'POST',
+        body: JSON.stringify({ token, game, score }),
+      }),
   },
 };

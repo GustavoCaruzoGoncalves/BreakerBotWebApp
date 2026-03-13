@@ -11,6 +11,7 @@ import {
   Trophy,
   Gift,
   Flame,
+  Gamepad2,
   Settings,
   Archive,
   Menu,
@@ -29,12 +30,14 @@ interface NavItem {
   label: string;
   icon: React.ElementType;
   adminOnly?: boolean;
+  matchPrefix?: boolean;
 }
 
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Meu Perfil', icon: User },
   { href: '/dashboard/ranking', label: 'Ranking', icon: Trophy },
   { href: '/dashboard/aura', label: 'Aura', icon: Flame },
+  { href: '/dashboard/jogos', label: 'Jogos', icon: Gamepad2, matchPrefix: true },
   { href: '/dashboard/amigo-secreto', label: 'Amigo Secreto', icon: Gift },
   { href: '/dashboard/settings', label: 'Configurações', icon: Settings, adminOnly: true },
   { href: '/dashboard/backups', label: 'Backups', icon: Archive, adminOnly: true },
@@ -154,7 +157,9 @@ export default function DashboardLayout({
 
           <nav className="flex-1 p-4 space-y-1">
             {filteredNavItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = item.matchPrefix
+                ? pathname === item.href || pathname.startsWith(item.href + '/')
+                : pathname === item.href;
               return (
                 <Link
                   key={item.href}

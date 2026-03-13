@@ -107,10 +107,7 @@ export default function AuraPage() {
         </h1>
         <Card className="glass border-border/50 border-destructive/30">
           <CardContent className="p-6">
-            <p className="text-destructive">{error}</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Verifique se a API do BreakerBot está rodando e se a URL está correta em NEXT_PUBLIC_API_URL.
-            </p>
+            <p className="text-destructive">Erro ao carregar</p>
           </CardContent>
         </Card>
       </div>
