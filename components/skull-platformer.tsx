@@ -10,8 +10,8 @@ import { api } from '@/lib/api';
 
 const CELL = 16;
 const TUNNEL_ROW = 9;
-const SKULL_SPEED = 1.2;
-const ENEMY_SPEED = 0.55;
+const SKULL_SPEED = 1.9;
+const ENEMY_SPEED = 0.9;
 const POWER_DURATION = 360;
 
 // 0=dot, 1=wall, 2=power, 3=empty
@@ -79,6 +79,7 @@ export function SkullPlatformer() {
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const isMobileRef = useRef(false);
   const animationRef = useRef<number>(0);
+  const lastTimeRef = useRef<number>(0);
   const startedRef = useRef(started);
   const gameOverRef = useRef(gameOver);
   const wonRef = useRef(won);
@@ -218,12 +219,19 @@ export function SkullPlatformer() {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    const gameLoop = () => {
+    const gameLoop = (now: number = 0) => {
       const state = gameStateRef.current;
       const cw = canvas.width;
       const ch = canvas.height;
 
+      const delta = lastTimeRef.current ? now - lastTimeRef.current : 16.67;
+      lastTimeRef.current = now;
+      const mult = Math.min(delta / 16.67, 4);
+
       if (startedRef.current && !gameOverRef.current && !wonRef.current) {
+        const skullSpeed = SKULL_SPEED * mult;
+        const enemySpeed = ENEMY_SPEED * mult;
+
         // 0=none, 1=left, 2=right, 3=up, 4=down
         state.nextDir = 0;
         if (keysRef.current['ArrowLeft'] || keysRef.current['a']) state.nextDir = 1;
@@ -237,8 +245,8 @@ export function SkullPlatformer() {
         const row = Math.floor(state.skullY / CELL);
         const cx = (col + 0.5) * CELL;
         const cy = (row + 0.5) * CELL;
-        const atCenter = Math.abs(state.skullX - cx) <= SKULL_SPEED &&
-                          Math.abs(state.skullY - cy) <= SKULL_SPEED;
+        const atCenter = Math.abs(state.skullX - cx) <= skullSpeed * 1.5 &&
+                          Math.abs(state.skullY - cy) <= skullSpeed * 1.5;
 
         if (state.nextDir !== 0 && state.nextDir !== state.skullDir && atCenter) {
           const [ndx, ndy] = dirVec[state.nextDir];
@@ -251,8 +259,8 @@ export function SkullPlatformer() {
 
         if (state.skullDir !== 0) {
           const [dx, dy] = dirVec[state.skullDir];
-          let nx = state.skullX + dx * SKULL_SPEED;
-          let ny = state.skullY + dy * SKULL_SPEED;
+          let nx = state.skullX + dx * skullSpeed;
+          let ny = state.skullY + dy * skullSpeed;
 
           if (dx !== 0) ny = cy;
           if (dy !== 0) nx = cx;
@@ -295,7 +303,7 @@ export function SkullPlatformer() {
           }
         }
 
-        if (state.powerTimer > 0) state.powerTimer--;
+        if (state.powerTimer > 0) state.powerTimer -= mult;
 
         const opposite = [0, 2, 1, 4, 3];
         const pickDir = (opts: number[], tx: number, ty: number, ec: number, er: number, closest: boolean) => {
@@ -311,7 +319,7 @@ export function SkullPlatformer() {
         for (let ei = 0; ei < state.enemies.length; ei++) {
           const e = state.enemies[ei];
           if (e.dead) {
-            e.respawnTimer--;
+            e.respawnTimer -= mult;
             if (e.respawnTimer <= 0) {
               e.dead = false;
               e.x = e.homeX * CELL + CELL / 2;
@@ -326,8 +334,8 @@ export function SkullPlatformer() {
           const eRow = Math.floor(e.y / CELL);
           const eCx = (eCol + 0.5) * CELL;
           const eCy = (eRow + 0.5) * CELL;
-          const eAtCenter = Math.abs(e.x - eCx) < ENEMY_SPEED * 0.5 &&
-                            Math.abs(e.y - eCy) < ENEMY_SPEED * 0.5;
+          const eAtCenter = Math.abs(e.x - eCx) < enemySpeed * 0.5 &&
+                            Math.abs(e.y - eCy) < enemySpeed * 0.5;
 
           if (eAtCenter) {
             e.x = eCx;
@@ -371,8 +379,8 @@ export function SkullPlatformer() {
 
           if (e.dir !== 0) {
             const [edx, edy] = dirVec[e.dir];
-            let enx = e.x + edx * ENEMY_SPEED;
-            let eny = e.y + edy * ENEMY_SPEED;
+            let enx = e.x + edx * enemySpeed;
+            let eny = e.y + edy * enemySpeed;
             if (edx !== 0) eny = eCy;
             if (edy !== 0) enx = eCx;
             const eaCol = eCol + (edx > 0 ? 1 : edx < 0 ? -1 : 0);
@@ -658,7 +666,7 @@ export function SkullPlatformer() {
       animationRef.current = requestAnimationFrame(gameLoop);
     };
 
-    gameLoop();
+    gameLoop(performance.now());
 
     return () => {
       ro.disconnect();
