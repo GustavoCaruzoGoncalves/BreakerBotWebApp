@@ -17,6 +17,7 @@ import {
   Edit3,
   Check,
   X,
+  MessageCircle,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -77,6 +78,9 @@ export default function AmigoSecretoPage() {
         (p.presente && p.presente.toLowerCase().includes(searchLower))
     );
   };
+
+  const isParticipantePlaceholder = (nome: string) =>
+    /^Participante \d+$/.test(nome?.trim() || '');
 
   const formatDate = (dateString: string) => {
     try {
@@ -298,6 +302,15 @@ export default function AmigoSecretoPage() {
                                     <span className="truncate">{formatDate(group.sorteioData)}</span>
                                   </div>
                                 )}
+
+                                {isParticipantePlaceholder(group.amigoSorteado.nome) && (
+                                  <div className="flex items-center gap-2 mt-3 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                    <MessageCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                                    <p className="text-xs text-amber-700 dark:text-amber-300">
+                                      Confira no privado do WhatsApp quem você tirou no sorteio.
+                                    </p>
+                                  </div>
+                                )}
                               </motion.div>
                             )}
 
@@ -312,6 +325,15 @@ export default function AmigoSecretoPage() {
                                   {group.meuNome}
                                 </span>
                               </div>
+
+                              {group.sorteioRealizado && isParticipantePlaceholder(group.meuNome ?? '') && (
+                                <div className="flex items-center gap-2 mt-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                  <MessageCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                                  <p className="text-xs text-amber-700 dark:text-amber-300">
+                                    Confira no privado do WhatsApp quem você tirou no sorteio.
+                                  </p>
+                                </div>
+                              )}
                               
                               {editingPresente === group.groupId ? (
                                 <div className="flex items-center gap-2 pl-6">

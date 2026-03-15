@@ -35,8 +35,8 @@ export const AURA_TIERS: AuraTier[] = [
 ];
 
 export const MISSION_CONFIG: MissionConfig[] = [
-  { id: 'messages_500', target: 500, reward: 1000, label: 'Mande 500 mensagens' },
-  { id: 'reactions_500', target: 500, reward: 2000, label: 'Reaja 500x com 💀 ou ☠️' },
+  { id: 'messages_500', target: 50, reward: 1000, label: 'Mande 50 mensagens' },
+  { id: 'reactions_500', target: 20, reward: 2000, label: 'Reaja 20x com 💀 ou ☠️' },
   { id: 'duel_win', target: 1, reward: 1000, label: 'Vença 1 duelo (!mog)' },
   { id: 'survive_attack', target: 1, reward: 2000, label: 'Sobreviva a um ataque (!mognow)' },
   { id: 'send_media', target: 1, reward: 200, label: 'Envie mídia (figurinha/vídeo/imagem/doc)' },

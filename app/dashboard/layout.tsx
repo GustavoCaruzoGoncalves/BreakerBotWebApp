@@ -18,6 +18,7 @@ import {
   X,
   RefreshCw,
   ChevronRight,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -41,6 +42,7 @@ const navItems: NavItem[] = [
   { href: '/dashboard/amigo-secreto', label: 'Amigo Secreto', icon: Gift },
   { href: '/dashboard/settings', label: 'Configurações', icon: Settings, adminOnly: true },
   { href: '/dashboard/backups', label: 'Backups', icon: Archive, adminOnly: true },
+  { href: '/dashboard/admin/usuarios', label: 'Gerenciar Usuários', icon: Users, adminOnly: true },
 ];
 
 export default function DashboardLayout({

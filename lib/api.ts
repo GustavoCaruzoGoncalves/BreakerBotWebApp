@@ -328,6 +328,23 @@ export const api = {
     list: () => fetchApi<AdminsResponse>('/api/admins'),
   },
 
+  adminUsers: {
+    export: (userId: string) =>
+      fetch(`${API_BASE_URL}/api/admin/users/export`, {
+        headers: { 'X-User-Id': userId },
+      }),
+
+    import: (data: Record<string, unknown>, userId: string) =>
+      fetchApi<ApiResponse & { imported?: number }>('/api/admin/users/import', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Id': userId,
+        },
+      } as RequestInit),
+  },
+
   amigoSecreto: {
     list: () => fetchApi<AmigoSecretoResponse>('/api/amigo-secreto'),
     

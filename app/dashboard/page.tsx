@@ -415,7 +415,7 @@ export default function ProfilePage() {
               ) : (
                 <BellOff className="w-5 h-5 text-muted-foreground" />
               )}
-              Menções no Ranking
+              Menções
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -423,7 +423,7 @@ export default function ProfilePage() {
               <div>
                 <p className="text-sm font-medium text-foreground">Permitir menções</p>
                 <p className="text-xs text-muted-foreground">
-                  Ser marcado quando aparecer no ranking
+                  Ser mencionado em qualquer situação que o bot mencione
                 </p>
               </div>
               <Switch
@@ -436,8 +436,8 @@ export default function ProfilePage() {
             <div className={`p-3 rounded-lg ${user.allowMentions ? 'bg-primary/10' : 'bg-secondary'}`}>
               <p className="text-sm text-muted-foreground">
                 {user.allowMentions
-                  ? '✓ Você será mencionado quando aparecer no ranking diário ou semanal.'
-                  : '✗ Seu nome aparecerá no ranking, mas sem marcar você.'}
+                  ? '✓ Você será mencionado em qualquer situação em que o bot mencione usuários.'
+                  : '✗ Seu nome aparecerá, mas sem marcar você.'}
               </p>
             </div>
           </CardContent>
