@@ -228,7 +228,8 @@ export interface AmigoSecretoResponse extends ApiResponse {
 }
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const response = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -236,13 +237,19 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
     },
   });
 
-  const data = await response.json();
-  
-  if (!response.ok) {
-    throw new Error(data.message || 'Erro na requisição');
+  const text = await response.text();
+  let data: Record<string, unknown>;
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(`Resposta inválida da API: ${text.slice(0, 100)}`);
   }
-  
-  return data;
+
+  if (!response.ok) {
+    throw new Error((data.message as string) || `Erro ${response.status}: ${response.statusText}`);
+  }
+
+  return data as T;
 }
 
 export const api = {

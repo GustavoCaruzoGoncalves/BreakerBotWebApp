@@ -10,11 +10,13 @@ import {
   Trash2,
   Upload,
   Download,
+  Plus,
   X,
   Shield,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { api, UserData } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -40,6 +42,19 @@ export default function AdminUsuariosPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    id: '',
+    pushName: '',
+    customName: '',
+    customNameEnabled: false,
+    allowMentions: false,
+    xp: 0,
+    level: 1,
+    prestige: 0,
+    auraPoints: 0,
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -209,6 +224,41 @@ export default function AdminUsuariosPage() {
     setExporting(false);
   };
 
+  const handleCreate = async () => {
+    const rawId = createForm.id.trim();
+    if (!rawId) {
+      toast({ title: 'ID obrigatório', description: 'Informe o ID do usuário (ex: 5516996242810 ou 5516996242810@s.whatsapp.net)', variant: 'destructive' });
+      return;
+    }
+    const id = rawId.includes('@') ? rawId : `${rawId}@s.whatsapp.net`;
+    setIsCreating(true);
+    try {
+      await api.users.create(id, {
+        pushName: createForm.pushName || null,
+        customName: createForm.customName || null,
+        customNameEnabled: createForm.customNameEnabled,
+        allowMentions: createForm.allowMentions,
+        xp: createForm.xp,
+        level: createForm.level,
+        prestige: createForm.prestige,
+      });
+      if (createForm.auraPoints > 0) {
+        await api.users.update(id, { aura: { auraPoints: createForm.auraPoints } } as Partial<UserData>);
+      }
+      toast({ title: 'Usuário criado!', description: `${id} criado com sucesso.` });
+      setShowCreateModal(false);
+      setCreateForm({ id: '', pushName: '', customName: '', customNameEnabled: false, allowMentions: false, xp: 0, level: 1, prestige: 0, auraPoints: 0 });
+      loadUsers();
+    } catch (e) {
+      toast({
+        title: 'Erro ao criar',
+        description: e instanceof Error ? e.message : 'Não foi possível criar o usuário.',
+        variant: 'destructive',
+      });
+    }
+    setIsCreating(false);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center min-h-[400px] items-center">
@@ -284,6 +334,13 @@ export default function AdminUsuariosPage() {
           )}
           <span className="ml-2">Exportar JSON</span>
         </Button>
+        <Button
+          onClick={() => setShowCreateModal(true)}
+          disabled={!userId}
+        >
+          <Plus className="w-4 h-4" />
+          <span className="ml-2">Criar usuário</span>
+        </Button>
       </div>
 
       <Card className="glass border-border/50">
@@ -354,6 +411,120 @@ export default function AdminUsuariosPage() {
         </CardContent>
       </Card>
 
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-card border border-border rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold">Criar usuário</h2>
+                <Button variant="ghost" size="icon" onClick={() => setShowCreateModal(false)}>
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mb-4">ID: número ou 5516996242810@s.whatsapp.net</p>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">ID *</label>
+                  <Input
+                    placeholder="5516996242810"
+                    value={createForm.id}
+                    onChange={(e) => setCreateForm((f) => ({ ...f, id: e.target.value }))}
+                    className="mt-1 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">pushName</label>
+                  <Input
+                    value={createForm.pushName}
+                    onChange={(e) => setCreateForm((f) => ({ ...f, pushName: e.target.value }))}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">customName</label>
+                  <Input
+                    value={createForm.customName}
+                    onChange={(e) => setCreateForm((f) => ({ ...f, customName: e.target.value }))}
+                    className="mt-1"
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-3">
+                  <label htmlFor="createCustomNameEnabled" className="text-sm font-medium cursor-pointer">
+                    Usar nome customizado
+                  </label>
+                  <Switch
+                    id="createCustomNameEnabled"
+                    checked={createForm.customNameEnabled}
+                    onCheckedChange={(checked) => setCreateForm((f) => ({ ...f, customNameEnabled: checked }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-3">
+                  <label htmlFor="createAllowMentions" className="text-sm font-medium cursor-pointer">
+                    Permitir menções
+                  </label>
+                  <Switch
+                    id="createAllowMentions"
+                    checked={createForm.allowMentions}
+                    onCheckedChange={(checked) => setCreateForm((f) => ({ ...f, allowMentions: checked }))}
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <label className="text-sm font-medium">XP</label>
+                    <Input
+                      type="number"
+                      value={createForm.xp}
+                      onChange={(e) => setCreateForm((f) => ({ ...f, xp: parseInt(e.target.value) || 0 }))}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Nível</label>
+                    <Input
+                      type="number"
+                      value={createForm.level}
+                      onChange={(e) => setCreateForm((f) => ({ ...f, level: parseInt(e.target.value) || 1 }))}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Prestígio</label>
+                    <Input
+                      type="number"
+                      value={createForm.prestige}
+                      onChange={(e) => setCreateForm((f) => ({ ...f, prestige: parseInt(e.target.value) || 0 }))}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Aura (auraPoints)</label>
+                  <Input
+                    type="number"
+                    value={createForm.auraPoints}
+                    onChange={(e) => setCreateForm((f) => ({ ...f, auraPoints: parseInt(e.target.value) || 0 }))}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 mt-6">
+                <Button variant="outline" onClick={() => setShowCreateModal(false)} className="flex-1">
+                  Cancelar
+                </Button>
+                <Button onClick={handleCreate} disabled={isCreating || !createForm.id.trim()} className="flex-1">
+                  {isCreating ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  Criar
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
           <motion.div
@@ -386,31 +557,29 @@ export default function AdminUsuariosPage() {
                     className="mt-1"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
+                <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-3">
+                  <label htmlFor="customNameEnabled" className="text-sm font-medium cursor-pointer">
+                    Usar nome customizado
+                  </label>
+                  <Switch
                     id="customNameEnabled"
                     checked={editForm.customNameEnabled ?? false}
-                    onChange={(e) =>
-                      setEditForm((f) => ({ ...f, customNameEnabled: e.target.checked }))
+                    onCheckedChange={(checked) =>
+                      setEditForm((f) => ({ ...f, customNameEnabled: checked }))
                     }
                   />
-                  <label htmlFor="customNameEnabled" className="text-sm">
-                    customNameEnabled
-                  </label>
                 </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
+                <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-3">
+                  <label htmlFor="allowMentions" className="text-sm font-medium cursor-pointer">
+                    Permitir menções
+                  </label>
+                  <Switch
                     id="allowMentions"
                     checked={editForm.allowMentions ?? false}
-                    onChange={(e) =>
-                      setEditForm((f) => ({ ...f, allowMentions: e.target.checked }))
+                    onCheckedChange={(checked) =>
+                      setEditForm((f) => ({ ...f, allowMentions: checked }))
                     }
                   />
-                  <label htmlFor="allowMentions" className="text-sm">
-                    allowMentions
-                  </label>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <div>
