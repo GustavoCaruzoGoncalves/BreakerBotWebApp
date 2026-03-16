@@ -61,6 +61,7 @@ export function SkullPlatformer() {
   const [won, setWon] = useState(false);
   const [started, setStarted] = useState(false);
   const [rewardSaved, setRewardSaved] = useState(false);
+  const [newBalance, setNewBalance] = useState<number | null>(null);
   const rewardSentRef = useRef(false);
   const gameStateRef = useRef({
     maze: MAZE.map(row => [...row]),
@@ -83,9 +84,13 @@ export function SkullPlatformer() {
   const startedRef = useRef(started);
   const gameOverRef = useRef(gameOver);
   const wonRef = useRef(won);
+  const rewardSavedRef = useRef(rewardSaved);
+  const newBalanceRef = useRef<number | null>(newBalance);
   startedRef.current = started;
   gameOverRef.current = gameOver;
   wonRef.current = won;
+  rewardSavedRef.current = rewardSaved;
+  newBalanceRef.current = newBalance;
 
   const initLevel = useCallback(() => {
     const maze = MAZE.map(row => row.map(c => (c === 1 ? 1 : c === 2 ? 2 : c === 0 ? 0 : 3)));
@@ -114,6 +119,7 @@ export function SkullPlatformer() {
     setGameOver(false);
     setWon(false);
     setRewardSaved(false);
+    setNewBalance(null);
     rewardSentRef.current = false;
   }, []);
 
@@ -127,7 +133,10 @@ export function SkullPlatformer() {
       const s = gameStateRef.current.score;
       const reward = gameOver ? s - 300 : s + 1000;
       api.aura.gameReward(token, 'skull-chase', reward).then(res => {
-        if (res.success) setRewardSaved(true);
+        if (res.success) {
+          setRewardSaved(true);
+          if (res.balance !== undefined) setNewBalance(res.balance);
+        }
       }).catch(() => {});
     }
   }, [gameOver, won, token]);
@@ -600,24 +609,28 @@ export function SkullPlatformer() {
           ctx.fillStyle = '#f8fafc';
           ctx.font = '30px system-ui';
           ctx.fillText(`+${state.score} - 300 = ${state.score - 300} aura`, cw / 2, ch / 2 + 5);
-          if (rewardSaved) {
-            ctx.fillStyle = '#22c55e';
-            ctx.font = '26px system-ui';
-            ctx.fillText('✓ Aura atualizada na sua conta', cw / 2, ch / 2 + 55);
+          if (rewardSavedRef.current) {
+            if (newBalanceRef.current !== null) {
+              ctx.fillStyle = '#f8fafc';
+              ctx.font = '24px system-ui';
+              ctx.fillText(`Saldo: ${newBalanceRef.current.toLocaleString()} aura`, cw / 2, ch / 2 + 90);
+            }
           }
           ctx.fillStyle = '#94a3b8';
           ctx.font = '30px system-ui';
-          ctx.fillText('Toque para jogar novamente', cw / 2, ch / 2 + 105);
+          ctx.fillText('Toque para jogar novamente', cw / 2, ch / 2 + (newBalanceRef.current !== null && rewardSavedRef.current ? 135 : 105));
         } else {
           ctx.font = 'bold 28px system-ui';
           ctx.fillText('Game Over!', cw / 2, ch / 2 - 30);
           ctx.fillStyle = '#f8fafc';
           ctx.font = '18px system-ui';
           ctx.fillText(`+${state.score} - 300 = ${state.score - 300} aura`, cw / 2, ch / 2 + 5);
-          if (rewardSaved) {
-            ctx.fillStyle = '#22c55e';
-            ctx.font = '13px system-ui';
-            ctx.fillText('✓ Aura atualizada na sua conta', cw / 2, ch / 2 + 28);
+          if (rewardSavedRef.current) {
+            if (newBalanceRef.current !== null) {
+              ctx.fillStyle = '#f8fafc';
+              ctx.font = '12px system-ui';
+              ctx.fillText(`Saldo: ${newBalanceRef.current.toLocaleString()} aura`, cw / 2, ch / 2 + 45);
+            }
           }
           ctx.fillStyle = '#94a3b8';
           ctx.font = '14px system-ui';
@@ -637,28 +650,32 @@ export function SkullPlatformer() {
           ctx.fillStyle = '#f8fafc';
           ctx.font = '30px system-ui';
           ctx.fillText(`+${state.score + 1000} aura`, cw / 2, ch / 2 + 5);
-          if (rewardSaved) {
-            ctx.fillStyle = '#22c55e';
-            ctx.font = '26px system-ui';
-            ctx.fillText('✓ Aura adicionada à sua conta', cw / 2, ch / 2 + 55);
+          if (rewardSavedRef.current) {
+            if (newBalanceRef.current !== null) {
+              ctx.fillStyle = '#f8fafc';
+              ctx.font = '24px system-ui';
+              ctx.fillText(`Saldo: ${newBalanceRef.current.toLocaleString()} aura`, cw / 2, ch / 2 + 90);
+            }
           }
           ctx.fillStyle = '#94a3b8';
           ctx.font = '30px system-ui';
-          ctx.fillText('Toque para jogar novamente', cw / 2, ch / 2 + 105);
+          ctx.fillText('Toque para jogar novamente', cw / 2, ch / 2 + (newBalanceRef.current !== null && rewardSavedRef.current ? 135 : 105));
         } else {
           ctx.font = 'bold 28px system-ui';
           ctx.fillText('Você venceu!', cw / 2, ch / 2 - 30);
           ctx.fillStyle = '#f8fafc';
           ctx.font = '18px system-ui';
           ctx.fillText(`+${state.score + 1000} aura`, cw / 2, ch / 2 + 5);
-          if (rewardSaved) {
-            ctx.fillStyle = '#22c55e';
-            ctx.font = '13px system-ui';
-            ctx.fillText('✓ Aura adicionada à sua conta', cw / 2, ch / 2 + 28);
+          if (rewardSavedRef.current) {
+            if (newBalanceRef.current !== null) {
+              ctx.fillStyle = '#f8fafc';
+              ctx.font = '12px system-ui';
+              ctx.fillText(`Saldo: ${newBalanceRef.current.toLocaleString()} aura`, cw / 2, ch / 2 + 45);
+            }
           }
           ctx.fillStyle = '#94a3b8';
           ctx.font = '14px system-ui';
-          ctx.fillText('Clique para jogar novamente', cw / 2, ch / 2 + 55);
+          ctx.fillText('Clique para jogar novamente', cw / 2, ch / 2 + (newBalanceRef.current !== null && rewardSavedRef.current ? 70 : 55));
         }
         ctx.textAlign = 'left';
       }
