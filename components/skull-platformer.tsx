@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
+import { formatAura } from '@/lib/utils';
 
 const CELL = 16;
 const TUNNEL_ROW = 9;
@@ -608,12 +609,12 @@ export function SkullPlatformer() {
           ctx.fillText('Game Over!', cw / 2, ch / 2 - 55);
           ctx.fillStyle = '#f8fafc';
           ctx.font = '30px system-ui';
-          ctx.fillText(`+${state.score} - 300 = ${state.score - 300} aura`, cw / 2, ch / 2 + 5);
+          ctx.fillText(`+${formatAura(state.score)} - 300 = ${formatAura(state.score - 300)} aura`, cw / 2, ch / 2 + 5);
           if (rewardSavedRef.current) {
             if (newBalanceRef.current !== null) {
               ctx.fillStyle = '#f8fafc';
               ctx.font = '24px system-ui';
-              ctx.fillText(`Saldo: ${newBalanceRef.current.toLocaleString()} aura`, cw / 2, ch / 2 + 90);
+              ctx.fillText(`Saldo: ${formatAura(newBalanceRef.current)} aura`, cw / 2, ch / 2 + 90);
             }
           }
           ctx.fillStyle = '#94a3b8';
@@ -624,12 +625,12 @@ export function SkullPlatformer() {
           ctx.fillText('Game Over!', cw / 2, ch / 2 - 30);
           ctx.fillStyle = '#f8fafc';
           ctx.font = '18px system-ui';
-          ctx.fillText(`+${state.score} - 300 = ${state.score - 300} aura`, cw / 2, ch / 2 + 5);
+          ctx.fillText(`+${formatAura(state.score)} - 300 = ${formatAura(state.score - 300)} aura`, cw / 2, ch / 2 + 5);
           if (rewardSavedRef.current) {
             if (newBalanceRef.current !== null) {
               ctx.fillStyle = '#f8fafc';
               ctx.font = '12px system-ui';
-              ctx.fillText(`Saldo: ${newBalanceRef.current.toLocaleString()} aura`, cw / 2, ch / 2 + 45);
+              ctx.fillText(`Saldo: ${formatAura(newBalanceRef.current)} aura`, cw / 2, ch / 2 + 45);
             }
           }
           ctx.fillStyle = '#94a3b8';
@@ -649,12 +650,12 @@ export function SkullPlatformer() {
           ctx.fillText('Você venceu!', cw / 2, ch / 2 - 55);
           ctx.fillStyle = '#f8fafc';
           ctx.font = '30px system-ui';
-          ctx.fillText(`+${state.score + 1000} aura`, cw / 2, ch / 2 + 5);
+          ctx.fillText(`+${formatAura(state.score + 1000)} aura`, cw / 2, ch / 2 + 5);
           if (rewardSavedRef.current) {
             if (newBalanceRef.current !== null) {
               ctx.fillStyle = '#f8fafc';
               ctx.font = '24px system-ui';
-              ctx.fillText(`Saldo: ${newBalanceRef.current.toLocaleString()} aura`, cw / 2, ch / 2 + 90);
+              ctx.fillText(`Saldo: ${formatAura(newBalanceRef.current)} aura`, cw / 2, ch / 2 + 90);
             }
           }
           ctx.fillStyle = '#94a3b8';
@@ -665,12 +666,12 @@ export function SkullPlatformer() {
           ctx.fillText('Você venceu!', cw / 2, ch / 2 - 30);
           ctx.fillStyle = '#f8fafc';
           ctx.font = '18px system-ui';
-          ctx.fillText(`+${state.score + 1000} aura`, cw / 2, ch / 2 + 5);
+          ctx.fillText(`+${formatAura(state.score + 1000)} aura`, cw / 2, ch / 2 + 5);
           if (rewardSavedRef.current) {
             if (newBalanceRef.current !== null) {
               ctx.fillStyle = '#f8fafc';
               ctx.font = '12px system-ui';
-              ctx.fillText(`Saldo: ${newBalanceRef.current.toLocaleString()} aura`, cw / 2, ch / 2 + 45);
+              ctx.fillText(`Saldo: ${formatAura(newBalanceRef.current)} aura`, cw / 2, ch / 2 + 45);
             }
           }
           ctx.fillStyle = '#94a3b8';

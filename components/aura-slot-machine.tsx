@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flame, Minus, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { api, type AuraSlotReelSymbol } from '@/lib/api';
-import { cn } from '@/lib/utils';
+import { cn, formatAura } from '@/lib/utils';
 
 const BET_STEP = 1;
+const SPIN_COOLDOWN_MS = 1500;
 
 export function AuraSlotMachine({
   balance,
@@ -26,6 +27,9 @@ export function AuraSlotMachine({
   const [lastWin, setLastWin] = useState<number | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isCooldown, setIsCooldown] = useState(false);
+  const [cooldownRemaining, setCooldownRemaining] = useState(0);
+  const cooldownRef = useRef<{ timer: ReturnType<typeof setTimeout>; interval: ReturnType<typeof setInterval> } | null>(null);
 
   const handleSpin = async () => {
     if (!token) {
@@ -58,10 +62,37 @@ export function AuraSlotMachine({
       setError(e instanceof Error ? e.message : 'Erro ao girar');
     } finally {
       setIsSpinning(false);
+      setIsCooldown(true);
+      setCooldownRemaining(SPIN_COOLDOWN_MS / 1000);
+      if (cooldownRef.current) {
+        clearTimeout(cooldownRef.current.timer);
+        clearInterval(cooldownRef.current.interval);
+      }
+      const start = Date.now();
+      const interval = setInterval(() => {
+        const remaining = Math.ceil(Math.max(0, (SPIN_COOLDOWN_MS - (Date.now() - start)) / 1000));
+        setCooldownRemaining(remaining);
+      }, 100);
+      const timer = setTimeout(() => {
+        if (cooldownRef.current) {
+          clearInterval(cooldownRef.current.interval);
+          cooldownRef.current = null;
+        }
+        setIsCooldown(false);
+        setCooldownRemaining(0);
+      }, SPIN_COOLDOWN_MS);
+      cooldownRef.current = { timer, interval };
     }
   };
 
-  const canSpin = token && bet >= 1 && balance >= bet && !isSpinning;
+  const canSpin = token && bet >= 1 && balance >= bet && !isSpinning && !isCooldown;
+
+  useEffect(() => () => {
+    if (cooldownRef.current) {
+      clearTimeout(cooldownRef.current.timer);
+      clearInterval(cooldownRef.current.interval);
+    }
+  }, []);
 
   const adjustBet = (delta: number) => {
     const next = Math.max(0, bet + delta);
@@ -141,7 +172,7 @@ export function AuraSlotMachine({
                 : 'bg-muted text-muted-foreground'
             )}
           >
-            {lastWin > 0 ? `+${lastWin.toLocaleString()} aura!` : 'Sem ganhos'}
+            {lastWin > 0 ? `+${formatAura(lastWin)} aura!` : 'Sem ganhos'}
           </motion.div>
         )}
 
@@ -184,12 +215,12 @@ export function AuraSlotMachine({
             disabled={!canSpin}
             className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold px-8"
           >
-            {isSpinning ? 'Girando...' : 'GIRAR'}
+            {isSpinning ? 'Girando...' : isCooldown ? `Aguarde ${cooldownRemaining}s` : 'GIRAR'}
           </Button>
         </div>
 
         <p className="text-xs text-muted-foreground text-center">
-          Saldo: {balance.toLocaleString()} aura
+          Saldo: {formatAura(balance)} aura
         </p>
       </CardContent>
     </Card>

@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { useAuth } from '@/contexts/AuthContext';
 import { api, type AuraRankEntry, type AuraUserData, type AuraTier } from '@/lib/api';
 import { MISSION_CONFIG } from '@/lib/aura-data';
-import { cn } from '@/lib/utils';
+import { cn, formatAura } from '@/lib/utils';
 
 const PROGRESS_KEY: Record<string, keyof NonNullable<AuraUserData['dailyMissions']>['progress']> = {
   messages_500: 'messages',
@@ -143,14 +143,14 @@ export default function AuraPage() {
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-primary" />
                   <span className="text-2xl font-bold text-foreground">
-                    {myAura.auraPoints.toLocaleString()}
+                    {formatAura(myAura.auraPoints)}
                   </span>
                   <span className="text-muted-foreground">aura</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-primary" />
                   <span className="font-medium text-foreground">{myAura.tierName}</span>
-                  <span className="text-xs text-muted-foreground">(≥ {myAura.tierMinPoints.toLocaleString()} pts)</span>
+                  <span className="text-xs text-muted-foreground">(≥ {formatAura(myAura.tierMinPoints)} pts)</span>
                 </div>
                 <div className="text-sm text-muted-foreground">
                   🎭 Personagem: {myAura.character ? myAura.character : 'Nenhum definido'}
@@ -259,7 +259,7 @@ export default function AuraPage() {
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-foreground">
-                        {entry.auraPoints.toLocaleString()}
+                        {formatAura(entry.auraPoints)}
                       </p>
                       <p className="text-xs text-muted-foreground">aura</p>
                     </div>
@@ -295,7 +295,7 @@ export default function AuraPage() {
                   >
                     <span className="font-medium text-foreground">{tier.name}</span>
                     <span className="text-sm text-muted-foreground font-mono">
-                      ≥ {tier.minPoints.toLocaleString()} pts
+                      ≥ {formatAura(tier.minPoints)} pts
                     </span>
                   </div>
                 ))}

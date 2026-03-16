@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { api, UserData } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+import { formatAura } from '@/lib/utils';
 
 interface UserWithAura extends UserData {
   aura?: {
@@ -376,7 +377,9 @@ export default function AdminUsuariosPage() {
                     <td className="py-2 px-2 text-right">{u.level}</td>
                     <td className="py-2 px-2 text-right">{u.xp?.toLocaleString?.() ?? u.xp}</td>
                     <td className="py-2 px-2 text-right">
-                      {(u as UserWithAura).aura?.auraPoints ?? '—'}
+                      {(u as UserWithAura).aura?.auraPoints != null
+                        ? formatAura((u as UserWithAura).aura!.auraPoints)
+                        : '—'}
                     </td>
                     <td className="py-2 px-2">
                       <div className="flex gap-1 justify-end">
