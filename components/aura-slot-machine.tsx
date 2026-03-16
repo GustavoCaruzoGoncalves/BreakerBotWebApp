@@ -11,7 +11,7 @@ import { api, type AuraSlotReelSymbol } from '@/lib/api';
 import { cn, formatAura } from '@/lib/utils';
 
 const BET_STEP = 1;
-const SPIN_COOLDOWN_MS = 1500;
+const SPIN_COOLDOWN_MS = 800; // Equilíbrio: responsivo sem sobrecarregar
 
 export function AuraSlotMachine({
   balance,
