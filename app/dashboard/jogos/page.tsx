@@ -25,6 +25,15 @@ const GAMES = [
     color: 'from-slate-500/20 to-zinc-500/10',
     borderColor: 'border-slate-500/30',
   },
+  {
+    id: 'skullcards',
+    name: 'SkullCards',
+    description: 'UNO temático de caveiras, em tempo real com outros jogadores.',
+    href: '/dashboard/jogos/skullcards',
+    icon: Gamepad2,
+    color: 'from-slate-900/70 via-slate-800/60 to-slate-900/80',
+    borderColor: 'border-purple-500/40',
+  },
 ];
 
 export default function JogosPage() {

@@ -394,4 +394,33 @@ export const api = {
         body: JSON.stringify({ token, game, score }),
       }),
   },
+
+  skullcards: {
+    createRoom: (token: string, isPublic: boolean) =>
+      fetchApi<ApiResponse & { room?: unknown }>('/api/skullcards/rooms', {
+        method: 'POST',
+        body: JSON.stringify({ token, isPublic }),
+      }),
+
+    joinRoom: (roomId: string, token: string) =>
+      fetchApi<ApiResponse & { room?: unknown }>(`/api/skullcards/rooms/${encodeURIComponent(roomId)}/join`, {
+        method: 'POST',
+        body: JSON.stringify({ token }),
+      }),
+
+    startRoom: (roomId: string, token: string) =>
+      fetchApi<ApiResponse & { match?: unknown }>(`/api/skullcards/rooms/${encodeURIComponent(roomId)}/start`, {
+        method: 'POST',
+        body: JSON.stringify({ token }),
+      }),
+
+    getRoom: (roomId: string) =>
+      fetchApi<ApiResponse & { room?: unknown }>(`/api/skullcards/rooms/${encodeURIComponent(roomId)}`),
+
+    getMatchState: (matchId: string) =>
+      fetchApi<ApiResponse & { state?: unknown }>(`/api/skullcards/matches/${encodeURIComponent(matchId)}/state`),
+
+    listPublicRooms: () =>
+      fetchApi<ApiResponse & { rooms?: unknown[] }>('/api/skullcards/rooms-public'),
+  },
 };
