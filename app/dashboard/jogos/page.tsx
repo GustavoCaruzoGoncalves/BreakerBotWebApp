@@ -2,20 +2,20 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Gamepad2, Flame, ChevronRight, Skull } from 'lucide-react';
+import { /* Gamepad2, Flame, */ ChevronRight, Skull } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const GAMES = [
-  {
-    id: 'aura-farmer',
-    name: 'Aura Farmer',
-    description: 'Caça-níqueis da aura. Aposte e tente a sorte!',
-    href: '/dashboard/jogos/aura-farmer',
-    icon: Flame,
-    color: 'from-orange-500/20 to-amber-500/10',
-    borderColor: 'border-orange-500/30',
-  },
+  // {
+  //   id: 'aura-farmer',
+  //   name: 'Aura Farmer',
+  //   description: 'Caça-níqueis da aura. Aposte e tente a sorte!',
+  //   href: '/dashboard/jogos/aura-farmer',
+  //   icon: Flame,
+  //   color: 'from-orange-500/20 to-amber-500/10',
+  //   borderColor: 'border-orange-500/30',
+  // },
   {
     id: 'skull-runner',
     name: 'Skull Chase',
@@ -25,15 +25,15 @@ const GAMES = [
     color: 'from-slate-500/20 to-zinc-500/10',
     borderColor: 'border-slate-500/30',
   },
-  {
-    id: 'skullcards',
-    name: 'SkullCards',
-    description: 'UNO temático de caveiras, em tempo real com outros jogadores.',
-    href: '/dashboard/jogos/skullcards',
-    icon: Gamepad2,
-    color: 'from-slate-900/70 via-slate-800/60 to-slate-900/80',
-    borderColor: 'border-purple-500/40',
-  },
+  // {
+  //   id: 'skullcards',
+  //   name: 'SkullCards',
+  //   description: 'UNO temático de caveiras, em tempo real com outros jogadores.',
+  //   href: '/dashboard/jogos/skullcards',
+  //   icon: Gamepad2,
+  //   color: 'from-slate-900/70 via-slate-800/60 to-slate-900/80',
+  //   borderColor: 'border-purple-500/40',
+  // },
 ];
 
 export default function JogosPage() {
